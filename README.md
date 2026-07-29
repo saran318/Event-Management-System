@@ -120,21 +120,7 @@ The application relies on a `.env` file to securely load configuration variables
    ```
    The application will be accessible at `http://127.0.0.1:5000`.
 
-## Running with Docker (Recommended)
 
-The easiest way to run the application is using Docker. A pre-built image is available on Docker Hub.
-
-1. **Create your `.env` file** (as described in the Environment Variables section).
-2. **Run with Docker Compose**:
-   ```bash
-   docker-compose up -d
-   ```
-3. **Alternative - Run with Docker CLI**:
-   ```bash
-   docker run -d -p 5000:5000 --env-file .env saran318/eventverse-app:latest
-   ```
-
-The application will be accessible at `http://localhost:5000`.
 
 ## Testing
 
