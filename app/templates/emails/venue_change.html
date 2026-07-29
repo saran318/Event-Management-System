@@ -1,0 +1,20 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+<h3>Hello {{ user.full_name }},</h3>
+<p><strong>URGENT:</strong> The venue for <strong>{{ event.event_name }}</strong> has changed!</p>
+
+<div style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin: 15px 0;">
+    <p style="margin: 0;"><strong>Old Venue:</strong> <s>{{ old_venue }}</s></p>
+    <p style="margin: 0; font-size: 1.1em;"><strong>New Venue:</strong> {{ new_venue }}</p>
+</div>
+
+<h4>Current Event Details:</h4>
+<ul>
+    <li><strong>Date:</strong> {{ event.event_date.strftime('%B %d, %Y') }}</li>
+    <li><strong>Time:</strong> {{ event.event_time.strftime('%H:%M') }}</li>
+    <li><strong>Venue:</strong> {{ event.venue }}</li>
+</ul>
+
+<p>Please update your plans accordingly.</p>
+{% endblock %}

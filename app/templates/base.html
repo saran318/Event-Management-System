@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}EventVerse — Modern Event Platform{% endblock %}</title>
+    
+    <!-- Tailwind CSS with Forms & Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Google Fonts: Outfit, Syne, JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Flatpickr Calendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Tailwind Config for Swapped White Background & Black Words Design System -->
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "pure-white": "#FFFFFF",
+                "bg-body": "#FFFFFF",
+                "charcoal": "#000000",
+                "graphite": "#FFFFFF",
+                "dark-gray": "#F5F5F5",
+                "border-gray": "#CCCCCC",
+                "border-interactive": "#000000",
+                "input-bg": "#FFFFFF",
+                "input-border": "#CCCCCC",
+                "text-primary": "#000000",
+                "text-secondary": "#555555",
+                "text-muted": "#777777",
+                "text-disabled": "#999999"
+            },
+            "fontFamily": {
+                "sans": ["'Outfit'", "sans-serif"],
+                "headline": ["'Syne'", "sans-serif"],
+                "mono": ["'JetBrains Mono'", "monospace"]
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body, p, a, div, label, input, button, select, textarea, span:not(.material-symbols-outlined):not(.bi):not([class*="bi-"]) { 
+            background-color: #FFFFFF !important; 
+            color: #000000 !important; 
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal !important;
+            font-style: normal !important;
+            line-height: 1 !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            word-wrap: normal !important;
+            direction: ltr !important;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bi, [class^="bi-"], [class*=" bi-"] {
+            font-family: 'bootstrap-icons' !important;
+        }
+
+        h1, h2, h3, h4, .font-headline {
+            font-family: 'Syne', -apple-system, sans-serif !important;
+            letter-spacing: -0.02em !important;
+        }
+
+        .mono-card, .card, .glass-card {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CCCCCC !important;
+            color: #000000 !important;
+            border-radius: 8px;
+        }
+
+        .border-hard {
+            border: 1px solid #CCCCCC !important;
+        }
+
+        /* Custom Premium Flatpickr Calendar Theme */
+        .flatpickr-calendar {
+            background: #FFFFFF !important;
+            border: 1px solid #000000 !important;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+            border-radius: 8px !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            color: #000000 !important;
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected:focus, .flatpickr-day.selected:hover {
+            background: #000000 !important;
+            border-color: #000000 !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-day:hover {
+            background: #F0F0F0 !important;
+        }
+        .flatpickr-current-month, .flatpickr-month {
+            color: #000000 !important;
+            fill: #000000 !important;
+        }
+        .flatpickr-time {
+            height: 60px !important;
+            max-height: 60px !important;
+            line-height: 60px !important;
+        }
+        .flatpickr-time input {
+            font-weight: 800 !important;
+            font-size: 1.5rem !important;
+            color: #000000 !important;
+            height: 100% !important;
+        }
+        .flatpickr-time .numInputWrapper {
+            height: 100% !important;
+        }
+        .flatpickr-time .flatpickr-am-pm {
+            font-weight: 800 !important;
+            font-size: 1.2rem !important;
+            color: #000000 !important;
+            height: 100% !important;
+        }
+
+
+        .bg-tonal-1 {
+            background-color: #F8F9FA !important;
+        }
+
+        .bg-tonal-2 {
+            background-color: #F1F3F5 !important;
+        }
+
+        .card-hover {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-hover:hover {
+            border-color: #000000 !important;
+            background-color: #F8F9FA !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background-color: #000000 !important;
+            color: #FFFFFF !important;
+            border: 1px solid #000000 !important;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #222222 !important;
+            border-color: #222222 !important;
+            color: #FFFFFF !important;
+        }
+
+        .btn-secondary {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+            border: 1px solid #CCCCCC !important;
+            transition: all 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #F5F5F5 !important;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
+            background-color: #FFFFFF !important;
+            color: #000000 !important;
+            border: 1px solid #CCCCCC !important;
+            border-radius: 6px;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #888888 !important;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #000000 !important;
+            box-shadow: 0 0 0 1px #000000 !important;
+            outline: none !important;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #FFFFFF; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #CCCCCC; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #000000; }
+        
+        a { text-decoration: none !important; }
+
+        .dropdown-menu {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CCCCCC !important;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.1) !important;
+            color: #000000 !important;
+        }
+
+        /* Registration success box — green theme overrides */
+        .bg-green-50 { background-color: #f0fdf4 !important; }
+        .border-green-400 { border-color: #4ade80 !important; }
+        .text-green-600 { color: #16a34a !important; }
+        .text-green-700 { color: #15803d !important; }
+    </style>
+    <!-- Custom Styles -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body class="min-h-screen flex flex-col font-sans bg-white text-black">
+    <!-- Top Sticky Header Navigation -->
+    <header class="w-full bg-white border-b border-[#CCCCCC] sticky top-0 z-50 shadow-xs">
+        <div class="flex justify-between items-center px-6 py-3.5 max-w-7xl mx-auto">
+            <div class="flex items-center gap-8">
+                <a class="flex items-center gap-2.5 text-xl font-bold tracking-tight text-black no-underline group" href="{{ url_for('events.list_events') }}">
+                    <div class="w-7 h-7 bg-black text-white flex items-center justify-center font-mono font-bold text-xs rounded-sm">
+                        E
+                    </div>
+                    <span class="font-bold text-black tracking-widest font-mono text-sm uppercase">EventVerse</span>
+                </a>
+                <nav class="hidden md:flex items-center gap-6">
+                    {% if request.endpoint not in ['auth.login', 'auth.register'] %}
+                    <a class="text-xs font-mono uppercase tracking-wider transition-colors {{ 'text-black font-bold border-b-2 border-black pb-1' if request.endpoint == 'events.list_events' or request.endpoint == 'events.view_event' else 'text-[#555555] hover:text-black' }}" href="{{ url_for('events.list_events') }}">
+                        Home
+                    </a>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                        <a class="text-xs font-mono uppercase tracking-wider transition-colors {{ 'text-black font-bold border-b-2 border-black pb-1' if request.endpoint == 'dashboard.index' else 'text-[#555555] hover:text-black' }}" href="{{ url_for('dashboard.index') }}">
+                            Analytics
+                        </a>
+                        {% endif %}
+                        {% if current_user.role != 'admin' %}
+                        <a class="text-xs font-mono uppercase tracking-wider transition-colors {{ 'text-black font-bold border-b-2 border-black pb-1' if request.endpoint == 'registrations.list_registrations' else 'text-[#555555] hover:text-black' }}" href="{{ url_for('registrations.list_registrations') }}">
+                            My Registrations
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </nav>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('events.create_event') }}" class="hidden lg:flex items-center gap-1.5 bg-black text-white px-3.5 py-1.5 font-mono text-xs font-bold uppercase tracking-wider rounded hover:bg-neutral-800 transition-colors">
+                        <span class="material-symbols-outlined text-[16px]">add</span>
+                        Create Event
+                    </a>
+                    {% endif %}
+                    
+                    <div class="dropdown">
+                        <button class="flex items-center gap-2 p-1.5 bg-white border border-[#CCCCCC] hover:border-black transition-colors rounded" type="button" id="userMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="w-7 h-7 bg-black text-white flex items-center justify-center font-bold text-xs font-mono rounded-sm">
+                                {{ current_user.full_name[0] | upper }}
+                            </div>
+                            <span class="text-xs font-medium text-black pr-1 hidden sm:inline">{{ current_user.full_name.split()[0] }}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 font-mono uppercase bg-[#F5F5F5] text-black font-bold border border-[#CCCCCC] rounded-xs">
+                                {{ current_user.role }}
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-md p-2 mt-2" aria-labelledby="userMenuBtn">
+                            <li class="px-3 py-2 border-b border-[#CCCCCC] mb-1">
+                                <div class="font-bold text-xs text-black">{{ current_user.full_name }}</div>
+                                <div class="text-[11px] text-[#555555] font-mono">{{ current_user.email }}</div>
+                            </li>
+                            <li>
+                                <a class="dropdown-item flex items-center gap-2 text-red-600 hover:bg-red-50 font-mono text-xs py-2 rounded" href="{{ url_for('auth.logout') }}">
+                                    <span class="material-symbols-outlined text-[16px]">logout</span>
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    {% if request.endpoint not in ['auth.login', 'auth.register'] %}
+                    <a href="{{ url_for('auth.login') }}" class="px-4 py-1.5 border border-[#CCCCCC] text-black text-xs font-mono uppercase tracking-wider hover:bg-[#F5F5F5] transition-colors rounded">
+                        Login
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="px-4 py-1.5 bg-black text-white text-xs font-mono font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors rounded">
+                        Register
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-8">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6 space-y-3 max-w-3xl mx-auto">
+                    {% for category, message in messages %}
+                        <div class="p-4 bg-white border border-[#CCCCCC] flex items-center justify-between text-xs font-mono text-black shadow-sm rounded-md" role="alert">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-[20px] text-black">
+                                    {% if category == 'success' %}check_circle{% elif category == 'danger' %}error{% elif category == 'warning' %}warning{% else %}info{% endif %}
+                                </span>
+                                <span>{{ message }}</span>
+                            </div>
+                            <button type="button" onclick="this.parentElement.remove()" class="text-[#555555] hover:text-black">
+                                <span class="material-symbols-outlined text-[16px]">close</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Dynamic Template Content -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Monochrome Footer -->
+    <footer class="w-full bg-white border-t border-[#CCCCCC] py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-xs text-[#555555] gap-4">
+            <div>
+                <span class="font-bold text-black font-mono uppercase">EventVerse</span> Ecosystem &copy; 2026. All rights reserved.
+            </div>
+            <div class="flex items-center gap-6 font-mono text-[11px] uppercase tracking-wider text-[#555555]">
+                <span>EventVerse Platform</span>
+                <span>•</span>
+                <span>Monochrome UI</span>
+                <span>•</span>
+                <span>Bootstrap & Tailwind</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
+</body>
+</html>
+
+
+
+
+
+
+

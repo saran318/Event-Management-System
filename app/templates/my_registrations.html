@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}My Registrations | EventVerse{% endblock %}
+
+{% block content %}
+<section class="mb-8">
+    <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#9A9A9A] font-bold">ACCOUNT MANAGEMENT</span>
+    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-1">My Registrations Manager</h1>
+    <p class="text-[#CFCFCF] max-w-2xl text-sm mt-1">Track your upcoming event passes, schedule times, and registration details.</p>
+</section>
+
+{% if registrations %}
+<div class="space-y-4">
+    {% for reg in registrations %}
+    <div class="mono-card bg-white border border-[#CCCCCC] p-6 flex flex-col justify-between card-hover rounded-lg">
+        <div>
+            <!-- Status Badge & Date -->
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-[#CCCCCC]">
+                {% if reg.event.is_cancelled %}
+                <span class="px-2.5 py-0.5 bg-red-600 text-white font-mono text-[10px] uppercase font-bold rounded-xs">
+                    CANCELLED
+                </span>
+                {% else %}
+                <span class="px-2.5 py-0.5 bg-black text-white font-mono text-[10px] uppercase font-bold rounded-xs">
+                    {{ reg.status | upper }}
+                </span>
+                {% endif %}
+                <span class="text-xs font-mono text-[#555555]">
+                    {{ reg.event.event_date.strftime('%b %d, %Y') }}
+                </span>
+            </div>
+
+            <!-- Event Details -->
+            <h3 class="text-lg font-bold text-black mb-2 leading-snug">
+                <a href="{{ url_for('events.view_event', event_id=reg.event.event_id) }}" class="text-black hover:text-[#555555] transition-colors">
+                    {{ reg.event.event_name }}
+                </a>
+            </h3>
+
+            <div class="space-y-2 mt-4 text-xs font-mono text-[#555555]">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-black">schedule</span>
+                    <span>{{ reg.event.event_time.strftime('%I:%M %p') }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-black">location_on</span>
+                    <span class="truncate text-black">{{ reg.event.venue }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-black">how_to_reg</span>
+                    <span>Registration ID: #{{ reg.registration_id }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="mt-6 pt-4 border-t border-[#CCCCCC] flex items-center justify-between gap-3">
+            <a href="{{ url_for('events.view_event', event_id=reg.event.event_id) }}" class="flex-1 text-center py-2 border border-[#CCCCCC] text-black font-mono text-xs uppercase tracking-wider hover:bg-[#F8F9FA] transition-colors rounded">
+                View Event
+            </a>
+            
+            {% if not reg.event.is_cancelled %}
+            <form action="{{ url_for('registrations.cancel_registration', registration_id=reg.registration_id) }}" method="POST" class="form-delete form-loading flex-1">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="w-full py-2 bg-red-600 text-white font-mono text-xs uppercase tracking-wider hover:bg-red-700 transition-colors font-bold rounded">
+                    Cancel Registration
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state p-12 text-center border border-[#CCCCCC] bg-white rounded-lg my-8">
+    <span class="material-symbols-outlined text-4xl text-[#555555] mb-3">how_to_reg</span>
+    <h3 class="text-lg font-bold text-black mb-1">No Active Registrations Found</h3>
+    <p class="text-xs text-[#555555] font-mono mb-6">You have not registered for any events yet.</p>
+    <a href="{{ url_for('events.list_events') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors rounded">
+        <span class="material-symbols-outlined text-[18px]">explore</span>
+        Browse Event Catalog
+    </a>
+</div>
+{% endif %}
+{% endblock %}

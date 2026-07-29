@@ -1,0 +1,17 @@
+Hello {{ user.full_name }},
+
+URGENT: The venue for {{ event.event_name }} has changed!
+
+Old Venue: {{ old_venue }}
+New Venue: {{ new_venue }}
+
+Current Event Details:
+- Date: {{ event.event_date.strftime('%B %d, %Y') }}
+- Time: {{ event.event_time.strftime('%H:%M') }}
+- Venue: {{ event.venue }}
+
+Please update your plans accordingly.
+
+--
+Event Management System
+This is an automated message, please do not reply.

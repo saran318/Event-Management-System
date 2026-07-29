@@ -1,0 +1,19 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+<h3>Hello {{ user.full_name }},</h3>
+<p>Your registration for <strong>{{ event.event_name }}</strong> has been confirmed!</p>
+
+<h4>Event Details:</h4>
+<ul>
+    <li><strong>Description:</strong> {{ event.description }}</li>
+    <li><strong>Date:</strong> {{ event.event_date.strftime('%B %d, %Y') }}</li>
+    <li><strong>Time:</strong> {{ event.event_time.strftime('%H:%M') }}</li>
+    <li><strong>Venue:</strong> {{ event.venue }}</li>
+    <li><strong>Organizer:</strong> {{ event.organizer }}</li>
+</ul>
+
+<p>Status: <span style="color: #28a745; font-weight: bold;">Confirmed</span></p>
+
+<p>We look forward to seeing you there!</p>
+{% endblock %}

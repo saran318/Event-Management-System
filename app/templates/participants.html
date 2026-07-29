@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Attendee Manifest - {{ event.event_name }} | EventVerse Admin{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+        <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#555555] font-bold">ADMIN MANAGEMENT TOOL</span>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-black mt-1">Event Attendees Manifest</h1>
+        <p class="text-xs font-mono text-[#555555] mt-0.5">Attendee management roster for {{ event.event_name }}</p>
+    </div>
+    <a href="{{ url_for('events.view_event', event_id=event.event_id) }}" class="inline-flex items-center gap-2 px-4 py-2 border border-[#CCCCCC] bg-white text-xs font-mono uppercase tracking-wider text-[#555555] hover:text-black hover:border-black transition-colors rounded self-start md:self-auto">
+        <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+        Back to Event
+    </a>
+</div>
+
+<!-- Event Summary Cards Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+    <div class="p-4 bg-white border border-[#CCCCCC] rounded-lg">
+        <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">DATE & TIME</span>
+        <span class="font-bold text-sm text-black block font-mono">{{ event.event_date.strftime('%b %d, %Y') }}</span>
+        <span class="text-xs text-[#555555] font-mono">{{ event.event_time.strftime('%I:%M %p') }}</span>
+    </div>
+
+    <div class="p-4 bg-white border border-[#CCCCCC] rounded-lg">
+        <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">VENUE</span>
+        <span class="font-bold text-sm text-black block truncate font-mono">{{ event.venue }}</span>
+        <span class="text-xs text-[#555555] font-mono">Location</span>
+    </div>
+
+    <div class="p-4 bg-white border border-[#CCCCCC] rounded-lg">
+        <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">HOST ORGANIZER</span>
+        <span class="font-bold text-sm text-black block truncate font-mono">{{ event.organizer }}</span>
+        <span class="text-xs text-[#555555] font-mono">Organizer</span>
+    </div>
+
+    <div class="p-4 bg-white border border-[#CCCCCC] rounded-lg">
+        <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">TOTAL REGISTRATIONS</span>
+        <span class="font-bold text-sm text-black block font-mono">{{ registrations|length }} / {{ event.capacity }}</span>
+        <span class="text-xs text-[#555555] font-mono">Capacity</span>
+    </div>
+</div>
+
+<!-- Participants Table -->
+<div class="bg-white border border-[#CCCCCC] rounded-lg overflow-hidden shadow-sm">
+    <div class="p-4 border-b border-[#CCCCCC] flex justify-between items-center bg-[#F8F9FA]">
+        <h3 class="font-bold text-sm uppercase tracking-wider text-black font-mono">Registered Attendees ({{ registrations|length }})</h3>
+    </div>
+
+    {% if registrations %}
+    <div class="table-responsive">
+        <table class="table table-hover w-full text-left text-sm mb-0">
+            <thead class="bg-[#F8F9FA] border-b border-[#CCCCCC] text-xs font-mono uppercase text-[#555555]">
+                <tr>
+                    <th class="p-4">Participant Name</th>
+                    <th class="p-4">Email Contact</th>
+                    <th class="p-4">Registration Timestamp</th>
+                    <th class="p-4">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-[#CCCCCC]">
+                {% for reg in registrations %}
+                <tr class="hover:bg-[#F8F9FA] transition-colors">
+                    <td class="p-4">
+                        <div class="font-bold text-black">{{ reg.user.full_name }}</div>
+                        <div class="text-xs text-[#555555] font-mono">@{{ reg.user.username }}</div>
+                    </td>
+                    <td class="p-4">
+                        <a href="mailto:{{ reg.user.email }}" class="text-[#555555] hover:text-black font-mono text-xs">{{ reg.user.email }}</a>
+                    </td>
+                    <td class="p-4 font-mono text-xs text-[#555555]">
+                        {{ reg.registration_date.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td class="p-4">
+                        {% if reg.status == 'registered' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-black text-white text-[10px] font-mono font-bold uppercase tracking-wider rounded-xs">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                Registered
+                            </span>
+                        {% elif reg.status == 'cancelled' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#F5F5F5] text-[#555555] text-[10px] font-mono font-bold uppercase tracking-wider border border-[#CCCCCC] rounded-xs">
+                                Cancelled
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-[#F5F5F5] text-black text-[10px] font-mono font-bold uppercase tracking-wider border border-[#CCCCCC] rounded-xs">
+                                {{ reg.status | title }}
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state p-12 text-center my-4 bg-white">
+        <span class="material-symbols-outlined text-4xl text-[#555555] mb-2">inbox</span>
+        <h3 class="text-lg font-bold text-black mb-1">No participants have registered for this event yet</h3>
+        <p class="text-xs text-[#555555] font-mono">When users register for this event pass, they will appear in this manifest.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

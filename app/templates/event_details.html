@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.event_name }} | EventVerse{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{{ url_for('events.list_events') }}" class="inline-flex items-center gap-2 text-xs font-mono text-[#555555] hover:text-black transition-colors">
+        <i class="bi bi-arrow-left text-sm"></i>
+        Back to Home
+    </a>
+</div>
+
+<!-- Hero Section -->
+<header class="mb-8 bg-[#F8F9FA] p-6 md:p-8 border border-[#CCCCCC] rounded-lg">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#555555] mb-1 block font-bold">EVENT SPECIFICATION & BOOKING</span>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-black tracking-tight">{{ event.event_name }}</h1>
+        </div>
+        <div class="flex gap-2">
+            {% if event.is_cancelled %}
+            <span class="px-3 py-1.5 bg-red-600 text-white font-mono text-xs font-bold uppercase rounded-xs">CANCELLED</span>
+            {% endif %}
+            <span class="px-3 py-1.5 bg-[#EAEAEA] text-black font-mono text-xs uppercase border border-[#CCCCCC] rounded-xs">{{ event.venue }}</span>
+            <span class="px-3 py-1.5 bg-black text-white font-mono text-xs font-bold uppercase rounded-xs">{{ event.event_date.strftime('%b %d, %Y') }}</span>
+        </div>
+    </div>
+</header>
+
+<!-- Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Left Side: Information & Agenda -->
+    <div class="lg:col-span-8 space-y-6">
+        <!-- Event Overview Card -->
+        <section class="bg-white border border-[#CCCCCC] p-6 md:p-8 rounded-lg">
+            <h2 class="text-lg font-bold text-black mb-4 pb-3 border-b border-[#CCCCCC] font-mono">ABOUT THIS EVENT</h2>
+            <p class="text-[#555555] leading-relaxed text-sm w-full whitespace-pre-line mb-6 font-sans">
+                {{ event.description or 'No detailed description available for this event yet.' }}
+            </p>
+
+
+            <!-- Specification Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#CCCCCC]">
+                <div class="p-4 bg-[#F8F9FA] border border-[#CCCCCC] rounded">
+                    <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">DATE & TIME</span>
+                    <span class="font-bold text-sm text-black block font-mono">{{ event.event_date.strftime('%b %d, %Y') }}</span>
+                    <span class="text-xs text-[#555555] font-mono">{{ event.event_time.strftime('%I:%M %p') }}</span>
+                </div>
+                <div class="p-4 bg-[#F8F9FA] border border-[#CCCCCC] rounded">
+                    <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">VENUE LOCATION</span>
+                    <span class="font-bold text-sm text-black block truncate font-mono">{{ event.venue }}</span>
+                    <span class="text-xs text-[#555555] font-mono">Physical Venue</span>
+                </div>
+                <div class="p-4 bg-[#F8F9FA] border border-[#CCCCCC] rounded">
+                    <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">HOST ORGANIZER</span>
+                    <span class="font-bold text-sm text-black block truncate font-mono">{{ event.organizer }}</span>
+                    <span class="text-xs text-[#555555] font-mono">Organizer</span>
+                </div>
+                <div class="p-4 bg-[#F8F9FA] border border-[#CCCCCC] rounded">
+                    <span class="text-[11px] font-mono text-[#555555] uppercase block mb-1">EVENT TYPE</span>
+                    <span class="font-bold text-sm text-black block font-mono uppercase">{{ event.event_type }}</span>
+                    <span class="text-xs text-[#555555] font-mono">Category</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Right Side: Booking & Actions -->
+    <aside class="lg:col-span-4 space-y-6">
+        <div class="bg-white p-6 border border-[#CCCCCC] sticky top-[100px] rounded-lg">
+            <h2 class="text-base font-bold text-black mb-4 pb-3 border-b border-[#CCCCCC] font-mono uppercase">REGISTRATION DETAILS</h2>
+            
+            {% set registered_count = event.registrations | selectattr('status', 'equalto', 'registered') | list | length if event.registrations is defined else 0 %}
+            {% set available_spots = event.capacity - registered_count %}
+
+            <div class="mb-6 space-y-3">
+                <div class="flex justify-between items-center text-xs font-mono">
+                    <span class="text-[#555555] uppercase">TOTAL CAPACITY</span>
+                    <span class="font-bold text-black">{{ event.capacity }} Seats</span>
+                </div>
+                <div class="flex justify-between items-center text-xs font-mono">
+                    <span class="text-[#555555] uppercase">REGISTERED ATTENDEES</span>
+                    <span class="font-bold text-black">{{ registered_count }}</span>
+                </div>
+                <div class="flex justify-between items-center text-xs font-mono">
+                    <span class="text-[#555555] uppercase">SPOTS REMAINING</span>
+                    <span class="font-bold text-black">
+                        {% if available_spots > 0 %}{{ available_spots }} Available{% else %}Sold Out{% endif %}
+                    </span>
+                </div>
+                
+                {% set pct = (registered_count / event.capacity * 100)|round|int if event.capacity > 0 else 0 %}
+                <div class="w-full h-1.5 bg-[#EAEAEA] rounded-full overflow-hidden border border-[#CCCCCC]">
+                    <div class="h-full bg-black" style="width: {{ pct if pct <= 100 else 100 }}%;"></div>
+                </div>
+            </div>
+
+            {% if current_user.is_authenticated %}
+                {% if current_user.role != 'admin' %}
+                    {% set user_reg = (user_registration if user_registration is defined else None) %}
+                    {% if is_registered or user_reg %}
+                        <div class="p-4 bg-green-50 border border-green-400 text-center mb-4 rounded">
+                            <i class="bi bi-check-circle-fill text-green-600 text-3xl mb-1 block"></i>
+                            <div class="font-bold text-green-700 text-sm">Registration Confirmed!</div>
+                            <p class="text-xs text-green-600 mt-1 font-mono">You are registered for this event.</p>
+                        </div>
+                        {% set reg_id = user_reg.registration_id if user_reg else (registration.registration_id if registration is defined else 0) %}
+                        <form action="{{ url_for('registrations.cancel_registration', registration_id=reg_id) }}" method="POST" class="form-delete form-loading">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="w-full py-3 border border-[#CCCCCC] text-red-600 hover:bg-red-50 text-xs font-mono uppercase tracking-wider transition-colors font-bold rounded">
+                                Cancel Registration
+                            </button>
+                        </form>
+                    {% else %}
+                        {% if available_spots > 0 and not is_full and not is_past and not event.is_cancelled %}
+                            <form action="{{ url_for('registrations.register', event_id=event.event_id) }}" method="POST" class="form-loading">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="w-full py-3.5 bg-black text-white font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2 rounded">
+                                    <i class="bi bi-person-check-fill text-base"></i>
+                                    Register for Event
+                                </button>
+                            </form>
+                        {% else %}
+                            <button disabled class="w-full py-3.5 bg-[#F5F5F5] text-[#999999] font-mono text-xs font-bold uppercase tracking-widest cursor-not-allowed border border-[#CCCCCC] rounded">
+                                {% if event.is_cancelled %}Event Cancelled{% elif is_past %}Event Completed{% else %}Event Fully Booked{% endif %}
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="w-full block py-3.5 bg-black text-white text-center font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors rounded">
+                    Login to Register
+                </a>
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <div class="mt-6 pt-4 border-t border-[#CCCCCC] space-y-2">
+                <a href="{{ url_for('events.edit_event', event_id=event.event_id) }}" class="w-full flex items-center justify-center gap-2 py-2 border border-[#CCCCCC] text-black hover:bg-[#F8F9FA] font-mono text-xs uppercase tracking-wider transition-colors rounded">
+                    <i class="bi bi-pencil-square text-sm"></i>
+                    Edit Event Specs
+                </a>
+                <a href="{{ url_for('events.participants', event_id=event.event_id) }}" class="w-full flex items-center justify-center gap-2 py-2 border border-[#CCCCCC] bg-[#F8F9FA] text-black hover:bg-[#EAEAEA] font-mono text-xs uppercase tracking-wider transition-colors rounded">
+                    <i class="bi bi-people-fill text-sm"></i>
+                    View Attendees Manifest ({{ registered_count }})
+                </a>
+                <form action="{{ url_for('events.delete_event', event_id=event.event_id) }}" method="POST" class="form-delete form-loading mt-2" onsubmit="return confirm('Are you sure you want to cancel this event? This action cannot be undone.');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 py-2 border border-black bg-white text-black font-mono text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-colors rounded">
+                        <i class="bi bi-x-circle-fill text-sm"></i>
+                        Cancel Event
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+
+
+
+
+
+

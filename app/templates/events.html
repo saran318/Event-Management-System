@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Events | EventVerse{% endblock %}
+
+{% block content %}
+
+
+<!-- Search and Filter Bar -->
+<section class="mb-lg bg-white p-4 border-hard flex flex-col md:flex-row gap-md items-center shadow-sm">
+    <form method="GET" action="{{ url_for('events.list_events') }}" class="w-full flex flex-col md:flex-row gap-md items-center">
+        <div class="relative flex-1 w-full">
+            <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-[#555555] pointer-events-none text-base"></i>
+            <input name="search" value="{{ request.args.get('search', '') }}" class="w-full pl-12 pr-4 py-3 border-hard focus:border-black focus:ring-0 outline-none placeholder:text-[#999999] bg-white transition-all text-sm" placeholder="Search events, venues, or keywords..." type="text">
+        </div>
+        <div class="flex items-center gap-sm w-full md:w-auto">
+            <input name="venue" value="{{ request.args.get('venue', '') }}" class="px-4 py-3 border-hard bg-white text-xs font-mono text-primary outline-none placeholder:text-gray-400" placeholder="Venue location..." type="text">
+            <input name="organizer" value="{{ request.args.get('organizer', '') }}" class="px-4 py-3 border-hard bg-white text-xs font-mono text-primary outline-none placeholder:text-gray-400" placeholder="Organizer..." type="text">
+            <button type="submit" class="flex items-center justify-center w-11 h-11 border-hard bg-white text-black hover:bg-[#F5F5F5] transition-colors rounded" title="Search">
+                <i class="bi bi-search text-base text-black"></i>
+            </button>
+            {% if request.args.get('search') or request.args.get('venue') or request.args.get('organizer') %}
+            <a href="{{ url_for('events.list_events') }}" class="flex items-center gap-1 px-4 py-3 border-hard bg-tonal-1 text-secondary text-xs font-mono uppercase tracking-wider hover:bg-tonal-2">
+                Reset
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+{% if events %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+    {% for event in events %}
+    <div class="mono-card bg-white border border-[#CCCCCC] flex flex-col justify-between card-hover rounded-lg overflow-hidden">
+        <div>
+            <!-- Header Badge Bar -->
+            <div class="p-4 border-b border-[#CCCCCC] flex justify-between items-center bg-[#F8F9FA]">
+                <span class="px-2.5 py-1 bg-black text-white font-mono text-[10px] uppercase font-bold rounded-xs">
+                    {{ event.event_type if event.event_type else 'GENERAL' }}
+                </span>
+                <span class="text-xs font-mono text-[#555555]">
+                    {{ event.event_date.strftime('%b %d, %Y') }}
+                </span>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-black mb-2 leading-snug">
+                    <a href="{{ url_for('events.view_event', event_id=event.event_id) }}" class="text-black hover:text-[#555555] transition-colors">
+                        {{ event.event_name }}
+                    </a>
+                </h3>
+
+                <p class="text-xs text-[#555555] mb-4 leading-relaxed">
+                    {{ event.description or 'No description provided for this event.' }}
+                </p>
+
+                <!-- Metadata Grid -->
+                <div class="space-y-2 border-t border-[#CCCCCC] pt-4 font-mono text-xs text-[#555555]">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-geo-alt-fill text-sm text-black"></i>
+                        <span class="truncate text-black">{{ event.venue }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-person-fill text-sm text-black"></i>
+                        <span class="truncate text-black">By {{ event.organizer }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="p-4 border-t border-[#CCCCCC] bg-[#F8F9FA] space-y-3">
+            <!-- Capacity Occupancy Bar -->
+            {% set registered_count = event.registrations | selectattr('status', 'equalto', 'registered') | list | length if event.registrations is defined else 0 %}
+            {% set available_spots = event.capacity - registered_count %}
+            {% set pct = (registered_count / event.capacity * 100)|round|int if event.capacity > 0 else 0 %}
+
+            <div>
+                <div class="flex justify-between items-center text-[11px] font-mono text-[#555555] mb-1">
+                    <span>CAPACITY OCCUPANCY</span>
+                    <span class="font-bold text-black">{{ registered_count }} / {{ event.capacity }}</span>
+                </div>
+                <div class="w-full h-1.5 bg-[#EAEAEA] rounded-full overflow-hidden border border-[#CCCCCC]">
+                    <div class="h-full bg-black" style="width: {{ pct if pct <= 100 else 100 }}%;"></div>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="flex gap-2 w-full">
+                <a href="{{ url_for('events.view_event', event_id=event.event_id) }}" class="flex-1 py-2.5 bg-black text-white text-center font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors block rounded">
+                    View Event
+                </a>
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <form action="{{ url_for('events.delete_event', event_id=event.event_id) }}" method="POST" class="form-delete form-loading flex-shrink-0" onsubmit="return confirm('Are you sure you want to cancel this event? This action cannot be undone.');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="h-full px-3 border border-black bg-white text-black font-mono text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors flex items-center justify-center rounded">
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state p-12 text-center border border-[#CCCCCC] bg-white rounded-lg my-8">
+    <span class="material-symbols-outlined text-4xl text-[#555555] mb-3">event_busy</span>
+    <h3 class="text-lg font-bold text-black mb-1">No events available yet</h3>
+    <p class="text-xs text-[#555555] font-mono">No events matched your search criteria or none have been published.</p>
+</div>
+{% endif %}
+{% endblock %}

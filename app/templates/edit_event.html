@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Event - {{ event.event_name }} | EventVerse Admin{% endblock %}
+
+
+{% block content %}
+<div class="max-w-3xl mx-auto my-8">
+    <div class="mb-6">
+        <a href="{{ url_for('events.view_event', event_id=event.event_id) }}" class="inline-flex items-center gap-2 text-xs font-mono text-[#555555] hover:text-black transition-colors">
+            <i class="bi bi-arrow-left text-sm"></i>
+            Back to Event Details
+        </a>
+    </div>
+
+    <div class="bg-white border border-[#CCCCCC] p-8 rounded-lg shadow-sm">
+        <div class="mb-8 pb-4 border-b border-[#CCCCCC]">
+            <span class="text-xs font-mono uppercase tracking-[0.2em] text-[#555555] font-bold">ADMIN EDIT TOOL</span>
+            <h1 class="text-2xl font-extrabold tracking-tight text-black mt-1">Edit Event Specifications</h1>
+            <p class="text-xs text-[#555555] mt-1">Update parameters and details for {{ event.event_name }}</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('events.edit_event', event_id=event.event_id) }}" class="space-y-6 needs-validation form-loading" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div>
+                <label for="title" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-1">Event Title <span class="text-red-600">*</span></label>
+                <input type="text" id="title" name="title" value="{{ event.event_name }}" required maxlength="150" class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">
+                <div class="invalid-feedback text-xs text-red-600 mt-1 font-mono">Please provide a valid title (max 150 chars).</div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="event_type" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-1">Event Type <span class="text-red-600">*</span></label>
+                    <input type="text" id="event_type" name="event_type" value="{{ event.event_type }}" required maxlength="50" class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">
+                    <div class="invalid-feedback text-xs text-red-600 mt-1 font-mono">Please provide an event type.</div>
+                </div>
+
+                <div>
+                    <label for="capacity" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-1">Capacity <span class="text-red-600">*</span></label>
+                    <input type="number" id="capacity" name="capacity" value="{{ event.capacity }}" required min="1" class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">
+                    <div class="invalid-feedback text-xs text-red-600 mt-1 font-mono">Capacity must be greater than 0.</div>
+                </div>
+            </div>
+
+            <div>
+                <label for="description" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-1">Event Description</label>
+                <textarea id="description" name="description" rows="4" maxlength="500" class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">{{ event.description }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="event_date" class="block text-xs font-mono uppercase tracking-wider text-[#555555]">Event Date <span class="text-red-600">*</span></label>
+                        <button type="button" id="btn_use_today" class="text-[11px] font-mono text-black font-bold border border-[#CCCCCC] bg-[#F8F9FA] px-2 py-0.5 rounded hover:bg-black hover:text-white transition-colors">Today</button>
+                    </div>
+                    <input type="date" id="event_date" name="event_date" value="{{ event.event_date.strftime('%Y-%m-%d') }}" required class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">
+                    <div class="invalid-feedback text-xs text-red-600 mt-1 font-mono">Please select a date.</div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-mono uppercase tracking-wider text-[#555555]">Event Time <span class="text-red-600">*</span></label>
+                    </div>
+                    <input type="hidden" id="event_time" name="event_time" value="{{ event.event_time.strftime('%H:%M') }}" required>
+                    <button type="button" id="open_time_picker" class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-[#CCCCCC] hover:border-black text-sm text-black rounded transition-colors font-mono">
+                        <span id="time_display_btn" class="font-bold text-black">{{ event.event_time.strftime('%I:%M %p') }}</span>
+                        <i class="bi bi-clock text-[#555555]"></i>
+                    </button>
+                    <div id="time_error" class="hidden text-xs text-red-600 mt-1 font-mono">Please select a time.</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="venue" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-1">Venue Location <span class="text-red-600">*</span></label>
+                    <input type="text" id="venue" name="venue" value="{{ event.venue }}" required maxlength="100" class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">
+                    <div class="invalid-feedback text-xs text-red-600 mt-1 font-mono">Please provide a venue.</div>
+                </div>
+
+                <div>
+                    <label for="organizer" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-1">Organizer <span class="text-red-600">*</span></label>
+                    <input type="text" id="organizer" name="organizer" value="{{ event.organizer }}" required maxlength="100" class="w-full px-3 py-2.5 bg-white border border-[#CCCCCC] focus:border-black outline-none text-sm text-black rounded">
+                    <div class="invalid-feedback text-xs text-red-600 mt-1 font-mono">Please provide an organizer.</div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-6 border-t border-[#CCCCCC]">
+                <form action="{{ url_for('events.delete_event', event_id=event.event_id) }}" method="POST" class="form-delete form-loading inline-block" onsubmit="return confirm('Are you sure you want to cancel this event? This action cannot be undone.');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="px-4 py-2.5 border border-black bg-white text-black font-mono text-xs font-bold uppercase tracking-wider hover:bg-gray-100 transition-colors flex items-center gap-1.5 rounded">
+                        Clear
+                    </button>
+                </form>
+                <div class="flex items-center gap-3">
+                    <a href="{{ url_for('events.view_event', event_id=event.event_id) }}" class="px-5 py-2.5 border border-[#CCCCCC] text-[#555555] hover:text-black font-mono text-xs uppercase tracking-wider transition-colors rounded">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 bg-black text-white font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors flex items-center gap-2 rounded">
+                        <i class="bi bi-floppy text-sm"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ====== CUSTOM TIME PICKER MODAL ====== -->
+<div id="time_picker_overlay" class="fixed inset-0 z-[999] flex items-center justify-center hidden" style="background:rgba(0,0,0,0.45);">
+    <div id="time_picker_modal" class="bg-white border border-[#CCCCCC] rounded-xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden" style="transform:scale(0.95);opacity:0;transition:all 0.2s ease;">
+
+        <!-- Header: current date & live clock -->
+        <div class="bg-[#F8F9FA] border-b border-[#CCCCCC] px-6 py-4">
+            <div class="flex items-center gap-2 mb-0.5">
+                <i class="bi bi-clock text-xs text-[#555555]"></i>
+                <span id="tp_live_date" class="text-xs font-mono text-[#555555] uppercase tracking-widest"></span>
+            </div>
+            <div id="tp_live_clock" class="text-2xl font-extrabold font-mono text-black tracking-tight"></div>
+        </div>
+
+        <!-- Time selector body -->
+        <div class="px-6 py-5">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-[#555555] mb-4 font-bold">SELECT TIME</p>
+
+            <div class="flex items-center justify-center gap-3 mb-5">
+                <!-- Hour -->
+                <div class="flex flex-col items-center gap-1">
+                    <button type="button" onclick="adjustTime('hour',1)" class="w-12 h-10 border border-[#CCCCCC] bg-[#F8F9FA] hover:bg-black hover:text-white flex items-center justify-center rounded-md transition-colors font-bold text-lg"><i class="bi bi-chevron-up"></i></button>
+                    <input type="number" id="tp_hour_display" onchange="manualTimeUpdate('hour', this)" class="w-20 h-16 text-center border border-[#000] rounded-md text-4xl font-extrabold font-mono text-black bg-white focus:outline-none focus:ring-0 p-0 m-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" value="12">
+                    <button type="button" onclick="adjustTime('hour',-1)" class="w-12 h-10 border border-[#CCCCCC] bg-[#F8F9FA] hover:bg-black hover:text-white flex items-center justify-center rounded-md transition-colors font-bold text-lg"><i class="bi bi-chevron-down"></i></button>
+                    <span class="text-[10px] font-mono text-[#555555] uppercase tracking-widest">Hour</span>
+                </div>
+                <div class="text-4xl font-extrabold font-mono text-black mb-4">:</div>
+                <!-- Minute -->
+                <div class="flex flex-col items-center gap-1">
+                    <button type="button" onclick="adjustTime('min',1)" class="w-12 h-10 border border-[#CCCCCC] bg-[#F8F9FA] hover:bg-black hover:text-white flex items-center justify-center rounded-md transition-colors font-bold text-lg"><i class="bi bi-chevron-up"></i></button>
+                    <input type="number" id="tp_min_display" onchange="manualTimeUpdate('min', this)" class="w-20 h-16 text-center border border-[#000] rounded-md text-4xl font-extrabold font-mono text-black bg-white focus:outline-none focus:ring-0 p-0 m-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" value="00">
+                    <button type="button" onclick="adjustTime('min',-1)" class="w-12 h-10 border border-[#CCCCCC] bg-[#F8F9FA] hover:bg-black hover:text-white flex items-center justify-center rounded-md transition-colors font-bold text-lg"><i class="bi bi-chevron-down"></i></button>
+                    <span class="text-[10px] font-mono text-[#555555] uppercase tracking-widest">Min</span>
+                </div>
+                <!-- AM/PM -->
+                <div class="flex flex-col items-center gap-2 ml-2">
+                    <button type="button" id="tp_am_btn" onclick="setAmPm('AM')" class="w-16 h-10 border border-[#CCCCCC] rounded-md font-mono font-bold text-sm transition-colors">AM</button>
+                    <button type="button" id="tp_pm_btn" onclick="setAmPm('PM')" class="w-16 h-10 border border-[#CCCCCC] rounded-md font-mono font-bold text-sm transition-colors">PM</button>
+                    <span class="text-[10px] font-mono text-[#555555] uppercase tracking-widest">Mode</span>
+                </div>
+            </div>
+
+            <div class="bg-[#F8F9FA] border border-[#CCCCCC] rounded-lg px-4 py-3 flex items-center justify-between mb-4">
+                <span class="text-xs font-mono uppercase text-[#555555] tracking-widest">Selected</span>
+                <span id="tp_preview" class="text-xl font-extrabold font-mono text-black">12:00 AM</span>
+            </div>
+
+            <button type="button" onclick="setNow()" class="w-full py-2 border border-[#CCCCCC] bg-[#F8F9FA] hover:bg-black hover:text-white text-xs font-mono uppercase tracking-widest font-bold rounded-md transition-colors mb-4">
+                <i class="bi bi-lightning-charge me-1"></i> Use Current Time
+            </button>
+        </div>
+
+        <div class="px-6 pb-5 flex gap-3">
+            <button type="button" onclick="closeTimePicker()" class="flex-1 py-2.5 border border-[#CCCCCC] text-[#555555] hover:text-black font-mono text-xs uppercase tracking-widest transition-colors rounded-md">Cancel</button>
+            <button type="button" onclick="confirmTime()" class="flex-1 py-2.5 bg-black text-white font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors rounded-md">Confirm Time</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Pre-load existing event time
+    let tpHour = 12, tpMin = 0, tpAmPm = 'AM';
+    const existingVal = document.getElementById('event_time').value; // HH:MM 24h
+    if (existingVal) {
+        let [h, m] = existingVal.split(':').map(Number);
+        tpAmPm = h >= 12 ? 'PM' : 'AM';
+        tpHour = h % 12 || 12;
+        tpMin  = m;
+    }
+
+    const overlay = document.getElementById('time_picker_overlay');
+    const modal   = document.getElementById('time_picker_modal');
+
+    function tickClock() {
+        const now = new Date();
+        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        document.getElementById('tp_live_date').textContent =
+            days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+        let h = now.getHours(), m = now.getMinutes();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        document.getElementById('tp_live_clock').textContent =
+            String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+    }
+    setInterval(tickClock, 1000);
+    tickClock();
+
+    function renderPicker() {
+        document.getElementById('tp_hour_display').value = String(tpHour).padStart(2,'0');
+        document.getElementById('tp_min_display').value  = String(tpMin).padStart(2,'0');
+        document.getElementById('tp_preview').textContent = String(tpHour).padStart(2,'0') + ':' + String(tpMin).padStart(2,'0') + ' ' + tpAmPm;
+        const amBtn = document.getElementById('tp_am_btn');
+        const pmBtn = document.getElementById('tp_pm_btn');
+        if (tpAmPm === 'AM') {
+            amBtn.className = 'w-16 h-10 bg-black text-white border border-black rounded-md font-mono font-bold text-sm transition-colors';
+            pmBtn.className = 'w-16 h-10 border border-[#CCCCCC] bg-white text-black rounded-md font-mono font-bold text-sm transition-colors';
+        } else {
+            pmBtn.className = 'w-16 h-10 bg-black text-white border border-black rounded-md font-mono font-bold text-sm transition-colors';
+            amBtn.className = 'w-16 h-10 border border-[#CCCCCC] bg-white text-black rounded-md font-mono font-bold text-sm transition-colors';
+        }
+    }
+
+    window.adjustTime = function(type, delta) {
+        if (type === 'hour') { tpHour = ((tpHour - 1 + delta + 12) % 12) + 1; }
+        else { tpMin = ((tpMin + delta) % 60 + 60) % 60; }
+        renderPicker();
+    };
+
+    window.manualTimeUpdate = function(type, el) {
+        let val = parseInt(el.value, 10);
+        if (isNaN(val)) {
+            renderPicker();
+            return;
+        }
+        if (type === 'hour') {
+            if (val < 1) val = 1;
+            if (val > 12) val = 12;
+            tpHour = val;
+        } else {
+            if (val < 0) val = 0;
+            if (val > 59) val = 59;
+            tpMin = val;
+        }
+        renderPicker();
+    };
+
+    window.setAmPm = function(val) { tpAmPm = val; renderPicker(); };
+    window.setNow = function() {
+        const now = new Date();
+        let h = now.getHours(), m = now.getMinutes();
+        tpAmPm = h >= 12 ? 'PM' : 'AM';
+        tpHour = h % 12 || 12; tpMin = m;
+        renderPicker();
+    };
+    window.openTimePicker = function() {
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(() => { modal.style.transform='scale(1)'; modal.style.opacity='1'; });
+    };
+    window.closeTimePicker = function() {
+        modal.style.transform='scale(0.95)'; modal.style.opacity='0';
+        setTimeout(() => overlay.classList.add('hidden'), 200);
+    };
+    window.confirmTime = function() {
+        let h24 = tpHour;
+        if (tpAmPm === 'PM' && tpHour !== 12) h24 = tpHour + 12;
+        if (tpAmPm === 'AM' && tpHour === 12) h24 = 0;
+        const timeVal    = String(h24).padStart(2,'0') + ':' + String(tpMin).padStart(2,'0');
+        const displayVal = String(tpHour).padStart(2,'0') + ':' + String(tpMin).padStart(2,'0') + ' ' + tpAmPm;
+        document.getElementById('event_time').value = timeVal;
+        document.getElementById('time_display_btn').textContent = displayVal;
+        closeTimePicker();
+    };
+
+    document.getElementById('open_time_picker').addEventListener('click', window.openTimePicker);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeTimePicker(); });
+
+    // Today button
+    const todayBtn = document.getElementById('btn_use_today');
+    if (todayBtn) {
+        todayBtn.addEventListener('click', function() {
+            const now = new Date();
+            document.getElementById('event_date').value =
+                now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+        });
+    }
+
+    renderPicker();
+})();
+</script>
+{% endblock %}
+
+
+
+
+
+

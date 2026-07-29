@@ -1,0 +1,16 @@
+Hello {{ user.full_name }},
+
+This is a friendly reminder that {{ event.event_name }} is happening soon!
+
+Event Details:
+- Date: {{ event.event_date.strftime('%B %d, %Y') }}
+- Time: {{ event.event_time.strftime('%H:%M') }}
+- Venue: {{ event.venue }}
+
+Time remaining: approximately {{ time_remaining.seconds // 3600 }} hours.
+
+See you there!
+
+--
+Event Management System
+This is an automated message, please do not reply.

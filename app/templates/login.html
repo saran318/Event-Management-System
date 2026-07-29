@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Login | EventVerse{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-16 md:my-24">
+    <div class="bg-white border border-[#CCCCCC] p-8 md:p-10 rounded-xl shadow-sm">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold tracking-tight text-black mb-2 leading-relaxed py-1">Login to EventVerse</h2>
+            <p class="text-sm text-[#555555] leading-relaxed py-1">Access your registered events and tools</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-5 form-loading">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div>
+                <label for="identifier" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-2 font-bold">Username or Email</label>
+                <div class="relative">
+                    <i class="bi bi-person absolute left-4 top-1/2 -translate-y-1/2 text-[#555555] text-lg"></i>
+                    <input type="text" id="identifier" name="identifier" required class="w-full pl-11 pr-4 py-3 bg-[#F9F9F9] border border-[#CCCCCC] focus:border-black focus:bg-white outline-none text-sm text-black placeholder-[#888888] rounded-md transition-colors" placeholder="username or email@example.com">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-xs font-mono uppercase tracking-wider text-[#555555] mb-2 font-bold">Password</label>
+                <div class="relative">
+                    <i class="bi bi-lock absolute left-4 top-1/2 -translate-y-1/2 text-[#555555] text-lg pointer-events-none"></i>
+                    <input type="password" id="password" name="password" required class="w-full pl-11 pr-11 py-3 bg-[#F9F9F9] border border-[#CCCCCC] focus:border-black focus:bg-white outline-none text-sm text-black placeholder-[#888888] rounded-md transition-colors" placeholder="••••••••">
+                    <button type="button" onclick="const p=document.getElementById('password'); const i=this.querySelector('i'); if(p.type==='password'){p.type='text'; i.classList.replace('bi-eye','bi-eye-slash');}else{p.type='password'; i.classList.replace('bi-eye-slash','bi-eye');}" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#555555] hover:text-black focus:outline-none flex items-center justify-center transition-colors">
+                        <i class="bi bi-eye text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 bg-black text-white font-mono text-xs font-bold uppercase tracking-[0.15em] hover:bg-neutral-800 transition-colors mt-2 flex items-center justify-center gap-2 rounded-md">
+                <i class="bi bi-box-arrow-in-right text-lg"></i>
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-[#CCCCCC] text-center">
+            <p class="text-xs text-[#555555]">
+                Don't have an account yet? 
+                <a href="{{ url_for('auth.register') }}" class="font-bold text-black hover:underline ml-1">Create an account</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

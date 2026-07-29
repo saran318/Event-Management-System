@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="font-family: monospace; padding: 20px; color: #333;">
+    <h2 style="color: #d9534f;">Event Cancelled</h2>
+    <p>Dear {{ user.full_name }},</p>
+    <p>We regret to inform you that the event <strong>{{ event.event_name }}</strong> scheduled for {{ event.event_date.strftime('%b %d, %Y') }} has been cancelled.</p>
+    <p>Your registration for this event has been automatically voided.</p>
+    <p>We apologize for any inconvenience this may cause.</p>
+    <br>
+    <p>Sincerely,</p>
+    <p>The EventVerse Team</p>
+</body>
+</html>

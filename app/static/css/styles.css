@@ -1,0 +1,118 @@
+/* 
+ * Light Monochrome Palette (Pure White Background & Black Words)
+ * Strictly HTML, CSS, Bootstrap & Tailwind.
+ */
+
+:root {
+    --pure-white: #FFFFFF;
+    --bg-body: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --tonal-1: #F8F9FA;
+    --tonal-2: #F1F3F5;
+    --border-gray: #CCCCCC;
+    
+    --text-primary: #000000;
+    --text-secondary: #555555;
+    --text-muted: #777777;
+    --text-disabled: #999999;
+    
+    --input-bg: #FFFFFF;
+    --input-border: #CCCCCC;
+
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    color: #000000 !important;
+    letter-spacing: -0.02em;
+}
+
+.mono-card, .card, .glass-card {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CCCCCC !important;
+    color: #000000 !important;
+    border-radius: 8px;
+}
+
+.border-hard {
+    border: 1px solid #CCCCCC !important;
+}
+
+.border-interactive {
+    border: 1px solid #000000 !important;
+}
+
+.bg-tonal-1 {
+    background-color: #F8F9FA !important;
+}
+
+.bg-tonal-2 {
+    background-color: #F1F3F5 !important;
+}
+
+.card-hover {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+    border-color: #000000 !important;
+    background-color: #F8F9FA !important;
+    transform: translateY(-2px);
+}
+
+/* Form Inputs */
+input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 1px solid #CCCCCC !important;
+    border-radius: 6px;
+    font-weight: 700 !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #888888 !important;
+    font-weight: 400 !important;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #000000 !important;
+    box-shadow: 0 0 0 1px #000000 !important;
+    outline: none !important;
+}
+
+/* Bootstrap Table Customization */
+.table {
+    color: #000000 !important;
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: #F8F9FA;
+}
+
+.table th {
+    color: #555555 !important;
+    border-bottom-color: #CCCCCC !important;
+    font-family: var(--font-mono);
+}
+
+.table td {
+    border-bottom-color: #EAEAEA !important;
+}
+
+.empty-state {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CCCCCC !important;
+    color: #000000 !important;
+}
+
+
+
+
+

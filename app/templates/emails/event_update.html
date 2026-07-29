@@ -1,0 +1,17 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+<h3>Hello {{ user.full_name }},</h3>
+<p>There has been an update to an event you are registered for: <strong>{{ event.event_name }}</strong>.</p>
+
+<div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin: 15px 0;">
+    <strong>Changed Fields:</strong>
+    <ul>
+        {% for field, change in changed_fields.items() %}
+        <li><strong>{{ field | title }}:</strong> changed from <em>{{ change.old }}</em> to <strong>{{ change.new }}</strong></li>
+        {% endfor %}
+    </ul>
+</div>
+
+<p>If you have any questions, please contact the organizer ({{ event.organizer }}).</p>
+{% endblock %}

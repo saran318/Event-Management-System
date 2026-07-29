@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}{% if current_user.role == 'admin' %}Analytics Dashboard{% else %}My Overview{% endif %} | EventVerse{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+    <div>
+        <p class="font-mono text-xs text-[#555555] uppercase tracking-[0.2em] mb-1 font-bold">SYSTEM OVERVIEW</p>
+        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-black">
+            {% if current_user.role == 'admin' %}
+                Admin Analytics Dashboard
+            {% else %}
+                User Dashboard
+            {% endif %}
+        </h1>
+        <p class="text-[#555555] text-sm mt-1">
+            {% if current_user.role == 'admin' %}
+                Real-time metrics, system performance, user engagement, and quick action shortcuts.
+            {% else %}
+                Welcome back, {{ current_user.full_name }}. Manage your registrations and discover upcoming events.
+            {% endif %}
+        </p>
+    </div>
+    {% if current_user.role == 'admin' %}
+    <a href="{{ url_for('events.create_event') }}" class="bg-black text-white px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors flex items-center gap-2 rounded">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Create Event
+    </a>
+    {% endif %}
+</div>
+
+
+<!-- Metric Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    <!-- Total Users -->
+    <div class="card bg-white border border-[#CCCCCC] p-6 flex flex-col justify-between h-40 rounded-lg">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-xs font-mono text-[#555555] uppercase tracking-wider block mb-1">TOTAL USERS</span>
+                <h3 class="text-3xl font-extrabold text-black font-mono">{{ total_users }}</h3>
+            </div>
+            <div class="w-10 h-10 bg-[#F8F9FA] border border-[#CCCCCC] flex items-center justify-center text-black rounded">
+                <i class="bi bi-people-fill text-xl"></i>
+            </div>
+        </div>
+        <div class="flex items-center text-xs font-mono text-[#555555] gap-1">
+            <span class="material-symbols-outlined text-black text-[16px]">trending_up</span>
+            <span class="text-black font-bold">Active System Members</span>
+        </div>
+    </div>
+
+    <!-- Total Events -->
+    <div class="card bg-white border border-[#CCCCCC] p-6 flex flex-col justify-between h-40 rounded-lg">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-xs font-mono text-[#555555] uppercase tracking-wider block mb-1">TOTAL EVENTS</span>
+                <h3 class="text-3xl font-extrabold text-black font-mono">{{ total_events }}</h3>
+            </div>
+            <div class="w-10 h-10 bg-[#F8F9FA] border border-[#CCCCCC] flex items-center justify-center text-black rounded">
+                <i class="bi bi-calendar-event-fill text-xl"></i>
+            </div>
+        </div>
+        <div class="flex items-center text-xs font-mono text-[#555555] gap-1">
+            <span class="material-symbols-outlined text-black text-[16px]">calendar_month</span>
+            <span>Created Events</span>
+        </div>
+    </div>
+
+    <!-- Total Registrations -->
+    <div class="card bg-white border border-[#CCCCCC] p-6 flex flex-col justify-between h-40 rounded-lg">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-xs font-mono text-[#555555] uppercase tracking-wider block mb-1">TOTAL REGISTRATIONS</span>
+                <h3 class="text-3xl font-extrabold text-black font-mono">{{ total_registrations }}</h3>
+            </div>
+            <div class="w-10 h-10 bg-[#F8F9FA] border border-[#CCCCCC] flex items-center justify-center text-black rounded">
+                <span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+            </div>
+        </div>
+        <div class="flex items-center text-xs font-mono text-[#555555] gap-1">
+            <span class="material-symbols-outlined text-black text-[16px]">how_to_reg</span>
+            <span>Confirmed Bookings</span>
+        </div>
+    </div>
+
+    <!-- Active Events -->
+    <div class="card bg-white border border-[#CCCCCC] p-6 flex flex-col justify-between h-40 rounded-lg">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-xs font-mono text-[#555555] uppercase tracking-wider block mb-1">UPCOMING EVENTS</span>
+                <h3 class="text-3xl font-extrabold text-black font-mono">{{ active_events }}</h3>
+            </div>
+            <div class="w-10 h-10 bg-[#F8F9FA] border border-[#CCCCCC] flex items-center justify-center text-black rounded">
+                <span class="material-symbols-outlined text-[20px]">upcoming</span>
+            </div>
+        </div>
+        <div class="flex items-center text-xs font-mono text-[#555555] gap-1">
+            <span class="material-symbols-outlined text-black text-[16px]">bolt</span>
+            <span class="text-black font-bold">Active & Open</span>
+        </div>
+    </div>
+
+    <!-- Cancelled Events -->
+    <div class="card bg-white border border-[#CCCCCC] p-6 flex flex-col justify-between h-40 rounded-lg">
+        <div class="flex justify-between items-start">
+            <div>
+                <span class="text-xs font-mono text-[#555555] uppercase tracking-wider block mb-1">CANCELLED EVENTS</span>
+                <h3 class="text-3xl font-extrabold text-black font-mono">{{ cancelled_events }}</h3>
+            </div>
+            <div class="w-10 h-10 bg-[#F8F9FA] border border-[#CCCCCC] flex items-center justify-center text-black rounded">
+                <span class="material-symbols-outlined text-[20px]">cancel</span>
+            </div>
+        </div>
+        <div class="flex items-center text-xs font-mono text-[#555555] gap-1">
+            <span class="material-symbols-outlined text-black text-[16px]">cancel</span>
+            <span class="text-black font-bold">Cancelled</span>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Quick Action Navigation Panel -->
+    <div class="lg:col-span-6 bg-white border border-[#CCCCCC] p-6 md:p-8 rounded-lg">
+        <h3 class="text-base font-bold text-black mb-4 pb-3 border-b border-[#CCCCCC] flex items-center gap-2 font-mono">
+            <span class="material-symbols-outlined text-black">bolt</span>
+            MANAGEMENT SHORTCUTS
+        </h3>
+        <div class="space-y-3">
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('events.create_event') }}" class="w-full flex items-center justify-between p-4 border border-[#CCCCCC] bg-[#F8F9FA] hover:border-black hover:bg-[#F1F3F5] transition-colors rounded group">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-black group-hover:scale-110 transition-transform">add_circle</span>
+                    <div>
+                        <span class="font-bold text-sm text-black block">Create New Event</span>
+                        <span class="text-xs text-[#555555]">Host a new conference, workshop, or webinar</span>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined text-[#555555] group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('events.list_events') }}" class="w-full flex items-center justify-between p-4 border border-[#CCCCCC] bg-[#F8F9FA] hover:border-black hover:bg-[#F1F3F5] transition-colors rounded group">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-black group-hover:scale-110 transition-transform">grid_view</span>
+                    <div>
+                        <span class="font-bold text-sm text-black block">Browse All Events</span>
+                        <span class="text-xs text-[#555555]">View and filter event catalog hub</span>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined text-[#555555] group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+
+            <a href="{{ url_for('registrations.list_registrations') }}" class="w-full flex items-center justify-between p-4 border border-[#CCCCCC] bg-[#F8F9FA] hover:border-black hover:bg-[#F1F3F5] transition-colors rounded group">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-black group-hover:scale-110 transition-transform">how_to_reg</span>
+                    <div>
+                        <span class="font-bold text-sm text-black block">My Registrations</span>
+                        <span class="text-xs text-[#555555]">View and manage your active event bookings</span>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined text-[#555555] group-hover:translate-x-1 transition-transform">chevron_right</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Active User Info Panel -->
+    <div class="lg:col-span-6 bg-white border border-[#CCCCCC] p-6 md:p-8 rounded-lg">
+        <h3 class="text-base font-bold text-black mb-4 pb-3 border-b border-[#CCCCCC] flex items-center gap-2 font-mono">
+            <span class="material-symbols-outlined text-black">account_circle</span>
+            ACCOUNT SESSION CONTEXT
+        </h3>
+        
+        <div class="space-y-4">
+            <div class="p-4 bg-[#F8F9FA] border border-[#CCCCCC] rounded">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-mono text-[#555555] uppercase">AUTHENTICATED AS</span>
+                    <span class="px-2 py-0.5 font-mono text-[10px] uppercase font-bold bg-black text-white rounded-xs">
+                        {{ current_user.role }}
+                    </span>
+                </div>
+                <div class="font-bold text-black text-base">{{ current_user.full_name }}</div>
+                <div class="text-xs text-[#555555] font-mono mt-0.5">{{ current_user.email }}</div>
+            </div>
+
+            <div class="p-4 border border-[#CCCCCC] bg-[#F8F9FA] rounded">
+                <span class="text-xs font-mono text-[#555555] uppercase block mb-1">SYSTEM HEALTH STATUS</span>
+                <div class="flex items-center gap-2 text-xs font-mono text-black font-bold">
+                    <span class="w-2.5 h-2.5 rounded-full bg-black animate-pulse"></span>
+                    Operational — All Services Online
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

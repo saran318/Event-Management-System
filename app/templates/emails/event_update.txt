@@ -1,0 +1,14 @@
+Hello {{ user.full_name }},
+
+There has been an update to an event you are registered for: {{ event.event_name }}.
+
+Changed Fields:
+{% for field, change in changed_fields.items() %}
+- {{ field | title }}: changed from '{{ change.old }}' to '{{ change.new }}'
+{% endfor %}
+
+If you have any questions, please contact the organizer ({{ event.organizer }}).
+
+--
+Event Management System
+This is an automated message, please do not reply.

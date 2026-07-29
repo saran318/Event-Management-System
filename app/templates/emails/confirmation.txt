@@ -1,0 +1,18 @@
+Hello {{ user.full_name }},
+
+Your registration for {{ event.event_name }} has been confirmed!
+
+Event Details:
+- Description: {{ event.description }}
+- Date: {{ event.event_date.strftime('%B %d, %Y') }}
+- Time: {{ event.event_time.strftime('%H:%M') }}
+- Venue: {{ event.venue }}
+- Organizer: {{ event.organizer }}
+
+Status: Confirmed
+
+We look forward to seeing you there!
+
+--
+Event Management System
+This is an automated message, please do not reply.

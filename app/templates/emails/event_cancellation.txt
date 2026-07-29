@@ -1,0 +1,10 @@
+Dear {{ user.full_name }},
+
+We regret to inform you that the event {{ event.event_name }} scheduled for {{ event.event_date.strftime('%b %d, %Y') }} has been cancelled.
+
+Your registration for this event has been automatically voided.
+
+We apologize for any inconvenience this may cause.
+
+Sincerely,
+The EventVerse Team
